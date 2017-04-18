@@ -26,7 +26,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	// Standard deviation for x, y and psi 
 	double std_x = std[0];
 	double std_y = std[1];
-	double std_theta = std[1]; 
+	double std_theta = std[2]; 
 
 	// Normal distribution for x, y and psi
 	normal_distribution<double> dist_x(x, std_x);
@@ -60,9 +60,9 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	//  http://www.cplusplus.com/reference/random/default_random_engine/
 
 	// Standard deviation for x, y and psi 
-	double std_x = std[0];
-	double std_y = std[1];
-	double std_theta = std[1];
+	double std_x = std_pos[0];
+	double std_y = std_pos[1];
+	double std_theta = std_pos[2];
 
 	default_random_engine gen;
 	for(int i = 0; i < num_particles ; ++i){
