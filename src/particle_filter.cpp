@@ -35,7 +35,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 
 	default_random_engine gen;
 
-	for(int i = 0 ; i < num_particles ; ++i){
+	for(int i = 0; i < num_particles; ++i){
 		// Create a particle and set its value
 		Particle p; 
 		p.id = i; 
@@ -58,6 +58,32 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	// NOTE: When adding noise you may find std::normal_distribution and std::default_random_engine useful.
 	//  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
 	//  http://www.cplusplus.com/reference/random/default_random_engine/
+
+	// Standard deviation for x, y and psi 
+	double std_x = std[0];
+	double std_y = std[1];
+	double std_theta = std[1];
+
+	default_random_engine gen;
+	for(int i = 0; i < num_particles ; ++i){
+		// Get the current particle 
+		Particle *p = &particles[i]; // Pointer because we'll updtae it. 
+
+		// Compute its updated  position
+		double updated_x = p->x + velocity / yaw_rate * (sin(p->theta + yaw_rate * delta_t) - sin(p->theta));
+		double updated_y = p->y + velocity / yaw_rate * (cos(p->theta) - cos(p->theta + yaw_rate * delta_t));
+		double updated_theta =  p->theta + yaw_rate * delta_t;
+
+		// Add Gaussian noise
+		normal_distribution<double> dist_x(updated_x, std_x);
+        normal_distribution<double> dist_y(updated_y, std_y);
+        normal_distribution<double> dist_theta(updated_theta, std_theta);
+
+		// Update the current particle
+		p->x = dist_x(gen);
+		p->y = dist_y(gen);
+		p->theta = dist_theta(gen);
+	}
 
 }
 
