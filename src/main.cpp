@@ -25,8 +25,6 @@ int main() {
 	double max_translation_error = 1; // Max allowable translation error to pass [m]
 	double max_yaw_error = 0.05; // Max allowable yaw error [rad]
 
-
-
 	// Start timer.
 	int start = clock();
 	
