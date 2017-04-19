@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
+#include <limits>
 
 #include "particle_filter.h"
 
@@ -71,7 +72,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	default_random_engine gen;
 	for(int i = 0; i < num_particles ; ++i){
 		// Get the current particle 
-		Particle *p = &particles[i]; // Pointer because we'll updtae it. 
+		Particle *p = &particles[i]; // Pointer because we'll update it. 
 
 		// Compute its updated  position
 		double updated_x = p->x + velocity / yaw_rate * (sin(p->theta + yaw_rate * delta_t) - sin(p->theta));
@@ -96,6 +97,18 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 	//   observed measurement to this particular landmark.
 	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to 
 	//   implement this method and use it as a helper during the updateWeights phase.
+
+	// For each predicted landmark, find the closest measurement and assign it to the landmark
+	for(auto prediction : predicted){ // Iterate over predicted landmarks
+		double maxDouvleValue = std::numeric_limits<double>::max(); // https://stackoverflow.com/questions/409348/iteration-over-stdvector-unsigned-vs-signed-index-variable
+		for(auto observation : observations){
+			// Get the distance between observations and landmark
+			double dist = dist(observation.x, observation.y, prediction.x, prediction.y)
+			if(dist < maxDouvleValue){
+				observation.id = prediction.id; 
+			}
+		}
+	}
 
 }
 
