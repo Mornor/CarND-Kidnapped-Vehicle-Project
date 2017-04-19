@@ -23,6 +23,10 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	// Define the number of particles
 	num_particles = 1000; 
 
+	// Resize wights and particle of the filter regarding the number of particles
+	weights.resize(num_particles);
+    particles.resize(num_particles);
+
 	// Standard deviation for x, y and psi 
 	double std_x = std[0];
 	double std_y = std[1];
@@ -37,7 +41,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 
 	for(int i = 0; i < num_particles; ++i){
 		// Create a particle and set its value
-		Particle p; 
+		struct Particle p; 
 		p.id = i; 
 		p.x = dist_x(gen);
 		p.y = dist_y(gen);
