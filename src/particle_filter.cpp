@@ -100,11 +100,11 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 
 	// For each predicted landmark, find the closest measurement and assign it to the landmark
 	for(auto prediction : predicted){ // Iterate over predicted landmarks
-		double maxDouvleValue = std::numeric_limits<double>::max(); // https://stackoverflow.com/questions/409348/iteration-over-stdvector-unsigned-vs-signed-index-variable
+		double smallest_dist = std::numeric_limits<double>::max(); // https://stackoverflow.com/questions/409348/iteration-over-stdvector-unsigned-vs-signed-index-variable
 		for(auto observation : observations){
 			// Get the distance between observations and landmark
-			double dist = dist(observation.x, observation.y, prediction.x, prediction.y)
-			if(dist < maxDouvleValue){
+			double dist_pred_obs = dist(observation.x, observation.y, prediction.x, prediction.y);
+			if(dist_pred_obs < smallest_dist){
 				observation.id = prediction.id; 
 			}
 		}
