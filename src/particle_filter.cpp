@@ -42,7 +42,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 
 	for(int i = 0; i < num_particles; ++i){
 		// Create a particle and set its value
-		struct Particle p; 
+		Particle p; 
 		p.id = i; 
 		p.x = dist_x(gen);
 		p.y = dist_y(gen);
@@ -107,13 +107,13 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 			if(dist_pred_obs < smallest_dist){
 				observation.id = prediction.id; 
 			}
+			smallest_dist = dist_pred_obs; 
 		}
 	}
 
 }
 
-void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], 
-		std::vector<LandmarkObs> observations, Map map_landmarks) {
+void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], std::vector<LandmarkObs> observations, Map map_landmarks) {
 	// TODO: Update the weights of each particle using a mult-variate Gaussian distribution. You can read
 	//   more about this distribution here: https://en.wikipedia.org/wiki/Multivariate_normal_distribution
 	// NOTE: The observations are given in the VEHICLE'S coordinate system. Your particles are located
@@ -125,12 +125,32 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	//   3.33. Note that you'll need to switch the minus sign in that equation to a plus to account 
 	//   for the fact that the map's y-axis actually points downwards.)
 	//   http://planning.cs.uiuc.edu/node99.html
+
+	// Extract value
+	double sigma_x = std_landmark[0];
+	double sigma_y = std_landmark[1]; 
+
+	// For each particle, convert observations from Vehicle to maps system
+	for(int i = 0; i < num_particles ; i++){
+		Particle *p = &particles[i];
+		
+	}
 }
 
 void ParticleFilter::resample() {
 	// TODO: Resample particles with replacement with probability proportional to their weight. 
 	// NOTE: You may find std::discrete_distribution helpful here.
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
+	default_random_engine gen;
+	discrete_distribution<int> distribution(weights.begin(), weights.end());
+
+	vector<Particle> resampled_particles;
+
+	for (int i = 0; i < num_particles; i++){
+		resampled_particles.push_back(particles[distribution(gen)]);
+	}
+
+	particles = resampled_particles;
 
 }
 
