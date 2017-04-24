@@ -140,18 +140,19 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], s
 			// Convert observations from Vehicle to Map space
 			LandmarkObs current_obs = observations[j];
 			LandmarkObs current_obs_transformed; 
-			double vx = current_obs.x * cos(p->theta) - current_obs.y * sin(p->theta) + p->x;
-			double vy = current_obs.x * sin(p->theta) + current_obs.y * cos(p->theta) + p->y;
+			double vx = (current_obs.x * cos(p->theta)) - (current_obs.y * sin(p->theta)) + p->x;
+			double vy = (current_obs.x * sin(p->theta)) + (current_obs.y * cos(p->theta)) + p->y;
 			current_obs_transformed.x = vx;
 			current_obs_transformed.y = vy;
 			current_obs_transformed.id = current_obs.id;  
+
 
 			// Associate the closest measurement to a given landmark
 			Map::single_landmark_s landmark; 
 			double smallest_dist = std::numeric_limits<double>::max(); // https://stackoverflow.com/questions/409348/iteration-over-stdvector-unsigned-vs-signed-index-variable
 			for(int k = 0; k < map_landmarks.landmark_list.size(); k++){ // For each landmark
 				Map::single_landmark_s current_lm = map_landmarks.landmark_list[k];
-				double dist_pred_obs = dist(current_obs_transformed.x, current_obs_transformed.x, current_lm.x_f, current_lm.y_f);
+				double dist_pred_obs = dist(current_obs_transformed.x, current_obs_transformed.y, current_lm.x_f, current_lm.y_f);
 				if(dist_pred_obs < smallest_dist){
 					smallest_dist = dist_pred_obs; 
 					landmark = current_lm; 
@@ -164,8 +165,16 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], s
 			weight *= numerator/denominator; 
 		}
 
-		p->weight = weight; 
 		weights_sum += weight;
+		p->weight = weight; 
+	}
+
+	// Normalize
+	for (int i = 0; i < num_particles; i++) {
+		Particle *p = &particles[i];
+		p->weight /= weights_sum;
+		weights[i] = p->weight;
+	}
 		
 		/*// Convert observations from Vehicle to Map space
 		vector<LandmarkObs> observations_map(observations);
@@ -196,14 +205,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], s
     	weight *= numerator/denominator; 
     	p->weight = weight; 
     	weights_sum += weight; */
-	}
-
-	// Normalize
-	for (int i = 0; i < num_particles; i++) {
-		Particle *p = &particles[i];
-		p->weight /= weights_sum;
-		weights[i] = p->weight;
-	}
 }
 
 void ParticleFilter::resample() {
