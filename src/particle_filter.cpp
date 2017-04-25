@@ -97,6 +97,7 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 	//   observed measurement to this particular landmark.
 	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to 
 	//   implement this method and use it as a helper during the updateWeights phase.
+	// NOTE: So far, this method is NOT being used
 
 	// For each predicted landmark, find the closest measurement and assign it to the landmark
 	for(auto prediction : predicted){ // Iterate over predicted landmarks
